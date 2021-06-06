@@ -48,21 +48,24 @@ int main(int _argc, char* _argv[])
     std::cout << *wid << std::endl;
     std::cout << *height << std::endl;
     mult = 2;
-    PIXELDATA** pixels = new PIXELDATA * [*wid];
-    for (int i = 0; i < *wid; i++)
+    //PIXELDATA** pixels = new PIXELDATA * [*wid];
+    /*for (int i = 0; i < *wid; i++)
     {
         pixels[i] = new PIXELDATA[*height];
-    }
+    }*/
+    PIXELDATA pixels[8][8];
     int* file_size = (int*)&HEAD[2];
     *file_size -= 54;
-    unsigned char* pixels_byte = new unsigned char[*file_size];
-    pFile.read((char*)pixels_byte, *file_size);
+
+    //unsigned char* pixels_byte = new unsigned char[*file_size];
+    unsigned char pixels_byte[192];
+    pFile.read((char*)&pixels_byte, *file_size);
     int pointer;
     for (int i = 0; i < *wid; i++)
     {
         for (int j = 0; j < *height; j++)
         {
-            pointer = i * (*wid) + j * 3;
+            pointer = i * (*wid)*3 + j * 3;
             pixels[i][j].blueC = pixels_byte[pointer];
             pixels[i][j].greenC = pixels_byte[pointer + 1];
             pixels[i][j].redC = pixels_byte[pointer + 2];
@@ -79,11 +82,12 @@ int main(int _argc, char* _argv[])
     heightn = (*height) * mult;
     file_sizen = ((widn) * (heightn) * 3) + 54;
 
-    PIXELDATA** pixels_n = new PIXELDATA * [widn];
+    /*PIXELDATA** pixels_n = new PIXELDATA * [widn];
     for (int i = 0; i < widn; i++)
     {
         pixels_n[i] = new PIXELDATA[heightn];
-    }
+    }*/
+    PIXELDATA pixels_n[16][16];
 
     int w = 0, h = 0;
 
@@ -119,8 +123,8 @@ int main(int _argc, char* _argv[])
     std::cout << file_sizen;
     pfile.write((char*)&HEAD, 54);
 
-    unsigned char* all_pixels = new unsigned char[file_sizen - 54];
-
+    //unsigned char* all_pixels = new unsigned char[file_sizen - 54];
+    unsigned char all_pixels[768];
 
     /*for (int i = 0; i < widn; i++)
     {
@@ -131,16 +135,29 @@ int main(int _argc, char* _argv[])
             pfile << pixels_n[i][j].redC;
         }
     }*/
+    int count = 0;
     for (int i = 0; i < widn; i++)
     {
         for (int j = 0; j < heightn; j++)
         {
-            pointer = i * (widn) + j * 3;
+            pointer = i * (widn)*3 +j * 3;
             all_pixels[pointer] = pixels_n[i][j].blueC;
             all_pixels[pointer+1] = pixels_n[i][j].greenC;
             all_pixels[pointer+2] = pixels_n[i][j].redC;
+            /*all_pixels[pointer] = 0x00;
+            all_pixels[pointer + 1] = 0x00;
+            all_pixels[pointer + 2] = 0x00;
+            count++;*/
         }
     }
-    pfile.write((char*)all_pixels, file_sizen - 54);
+    /*std::cout << std::endl;
+    std::cout << pointer;
+    std::cout << std::endl;
+    std::cout << count;*/
+   /* for (int i = 0; i < 768; i++)
+    {
+        std::cout << all_pixels[i] << std::endl;
+    }*/
+    pfile.write((char*)&all_pixels, file_sizen - 54);
     pfile.close();
 }

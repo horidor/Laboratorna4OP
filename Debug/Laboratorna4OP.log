@@ -1,2 +1,4 @@
 ﻿  main_g.cpp
+C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(39,10): warning C4101: 'a': unreferenced local variable
+C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(32,13): warning C4101: 'bh': unreferenced local variable
   Laboratorna4OP.vcxproj -> C:\labs\Laboratorna4OP\Debug\Laboratorna4OP.exe

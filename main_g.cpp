@@ -2,23 +2,23 @@
 #include <string>
 #include <fstream>
 
-typedef struct {
-    int8_t id[2];            // Завжди дві літери 'B' і 'M'
-    int32_t filesize;        // Розмір файла в байтах
-    int16_t reserved[2];     // 0, 0
-    int32_t headersize;      // 54L для 24-бітних зображень
-    int32_t infoSize;        // 40L для 24-бітних зображень
-    int32_t width;           // ширина зображення в пікселях
-    int32_t depth;           // висота зображення в пікселях
-    int16_t biPlanes;        // 1 (для 24-бітних зображень)
-    int16_t bits;            // 24 (для 24-бітних зображень)
-    int32_t biCompression;   // 0L
-    int32_t biSizeImage;     // Можна поставити в 0L для зображень без компрессії (наш варіант)
-    int32_t biXPelsPerMeter; // Рекомендована кількість пікселів на метр, можна 0L
-    int32_t biYPelsPerMeter; // Те саме, по висоті
-    int32_t biClrUsed;       // Для індексованих зображень, можна поставити 0L
-    int32_t biClrImportant;  // Те саме
-} BMPHEAD;
+//typedef struct {
+//    int8_t id[2];            // Завжди дві літери 'B' і 'M'
+//    int32_t filesize;        // Розмір файла в байтах
+//    int16_t reserved[2];     // 0, 0
+//    int32_t headersize;      // 54L для 24-бітних зображень
+//    int32_t infoSize;        // 40L для 24-бітних зображень
+//    int32_t width;           // ширина зображення в пікселях
+//    int32_t depth;           // висота зображення в пікселях
+//    int16_t biPlanes;        // 1 (для 24-бітних зображень)
+//    int16_t bits;            // 24 (для 24-бітних зображень)
+//    int32_t biCompression;   // 0L
+//    int32_t biSizeImage;     // Можна поставити в 0L для зображень без компрессії (наш варіант)
+//    int32_t biXPelsPerMeter; // Рекомендована кількість пікселів на метр, можна 0L
+//    int32_t biYPelsPerMeter; // Те саме, по висоті
+//    int32_t biClrUsed;       // Для індексованих зображень, можна поставити 0L
+//    int32_t biClrImportant;  // Те саме
+//} BMPHEAD;
 
 typedef struct {
     int8_t redC;
@@ -29,14 +29,14 @@ typedef struct {
 int main(int _argc, char* _argv[])
 {
 
-    BMPHEAD bh;
+    //BMPHEAD bh;
 
 
     std::fstream pFile("lab4.bmp", std::ios::in | std::ios::binary);
     unsigned char HEAD[54];
     pFile.read((char*)&HEAD, 54);
     //char* b;
-    int* a;
+    //int* a;
     //b = (char*) &HEAD[22];
     //a = (int*) &HEAD[3];
     //std::cout << *a;
@@ -48,24 +48,26 @@ int main(int _argc, char* _argv[])
     std::cout << *wid << std::endl;
     std::cout << *height << std::endl;
     mult = 2;
-    //PIXELDATA** pixels = new PIXELDATA * [*wid];
-    /*for (int i = 0; i < *wid; i++)
+    PIXELDATA** pixels = new PIXELDATA * [*height];
+    for (int i = 0; i < *height; i++)
     {
-        pixels[i] = new PIXELDATA[*height];
-    }*/
-    PIXELDATA pixels[8][8];
+        pixels[i] = new PIXELDATA[*wid];
+    }
+    //PIXELDATA pixels[8][8];
     int* file_size = (int*)&HEAD[2];
     *file_size -= 54;
 
-    //unsigned char* pixels_byte = new unsigned char[*file_size];
-    unsigned char pixels_byte[192];
-    pFile.read((char*)&pixels_byte, *file_size);
+    unsigned char* pixels_byte = new unsigned char[*file_size];
+    //unsigned char pixels_byte[192];
+    pFile.read((char*)pixels_byte, *file_size);
     int pointer;
-    for (int i = 0; i < *wid; i++)
+    int padding;
+    padding = *wid % 4;
+    for (int i = 0; i < *height; i++)
     {
-        for (int j = 0; j < *height; j++)
+        for (int j = 0; j < *wid; j++)
         {
-            pointer = i * (*wid)*3 + j * 3;
+            pointer = i * (*height)*3 + j * 3;
             pixels[i][j].blueC = pixels_byte[pointer];
             pixels[i][j].greenC = pixels_byte[pointer + 1];
             pixels[i][j].redC = pixels_byte[pointer + 2];
@@ -82,24 +84,24 @@ int main(int _argc, char* _argv[])
     heightn = (*height) * mult;
     file_sizen = ((widn) * (heightn) * 3) + 54;
 
-    /*PIXELDATA** pixels_n = new PIXELDATA * [widn];
-    for (int i = 0; i < widn; i++)
+    PIXELDATA** pixels_n = new PIXELDATA * [heightn];
+    for (int i = 0; i < heightn; i++)
     {
-        pixels_n[i] = new PIXELDATA[heightn];
-    }*/
-    PIXELDATA pixels_n[16][16];
+        pixels_n[i] = new PIXELDATA[widn];
+    }
+    //PIXELDATA pixels_n[16][16];
 
     int w = 0, h = 0;
 
     w = *wid;
     h = *height;
-    for (int i = 0; i < widn; i++)
+    for (int i = 0; i < heightn; i++)
     {
-        for (int j = 0; j < heightn; j++)
+        for (int j = 0; j < widn; j++)
         {
-            pixels_n[i][j].blueC = pixels[(i * w) / widn][(j * h) / heightn].blueC;
-            pixels_n[i][j].greenC = pixels[(i * w) / widn][(j * h) / heightn].greenC;
-            pixels_n[i][j].redC = pixels[(i * w) / widn][(j * h) / heightn].redC;
+            pixels_n[i][j].blueC = pixels[(i * h) / heightn][(j * w) / widn].blueC;
+            pixels_n[i][j].greenC = pixels[(i * h) / heightn][(j * w) / widn].greenC;
+            pixels_n[i][j].redC = pixels[(i * h) / heightn][(j * w) / widn].redC;
         }
     }
 
@@ -114,50 +116,95 @@ int main(int _argc, char* _argv[])
     }*/
 
     std::fstream pfile("lab4r.bmp", std::ios::out | std::ios::binary);
+    //FILE* pfile = fopen("lab4r.bmp", "wb");
+    //std::cout << sizeof(int) << std::endl;
+    /*unsigned char* WID = (unsigned char*)&widn;
+    unsigned char* HEI = (unsigned char*)&heightn;*/
+    int* WID;
+    int* HEI;
 
-    HEAD[2] = 0x03;
-    HEAD[3] = 0x36;
-    HEAD[18] = 0x10;
-    HEAD[22] = 0x10;
+    
 
-    std::cout << file_sizen;
-    pfile.write((char*)&HEAD, 54);
+    int FILE_LEN = (widn * heightn * 3) + 54;
+    int* len1;
+    len1 = (int*)&HEAD[2];
+    *len1 = FILE_LEN;
+    len1 = (int*)&HEAD[18];
+    *len1 = widn;
+    len1 = (int*)&HEAD[22];
+    *len1 = heightn;
+    //HEAD[2] = 0xC0;
+    //HEAD[3] = 0x36;
+    //HEAD[18] = 0x80;
+    //HEAD[22] = 0x80;
+    /*HEAD[18] = WID[0];
+    HEAD[19] = WID[1];
+    HEAD[20] = WID[2];
+    HEAD[21] = WID[3];
+    HEAD[22] = HEI[0];
+    HEAD[23] = HEI[1];
+    HEAD[24] = HEI[2];
+    HEAD[24] = HEI[3];*/
 
-    //unsigned char* all_pixels = new unsigned char[file_sizen - 54];
-    unsigned char all_pixels[768];
-
-    /*for (int i = 0; i < widn; i++)
+    //std::cout << file_sizen;
+    //pfile.write((char*)&HEAD, 54);
+    for (int i = 0; i < 54; i++)
     {
-        for (int j = 0; j < heightn; j++)
+        pfile << HEAD[i];
+    }
+    //fwrite((unsigned char*)&HEAD, 1, 54, pfile);
+    //std::cout << std::endl;
+
+   // unsigned char* all_pixels = new unsigned char[file_sizen - 54];
+   // //unsigned char all_pixels[768];
+
+   // for (int i = 0; i < widn; i++)
+   // {
+   //     for (int j = 0; j < heightn; j++)
+   //     {
+   //         pfile << pixels_n[i][j].blueC;
+   //         pfile << pixels_n[i][j].greenC;
+   //         pfile << pixels_n[i][j].redC;
+   //     }
+   // }
+   // int count = 0;
+   // for (int i = 0; i < widn; i++)
+   // {
+   //     for (int j = 0; j < heightn; j++)
+   //     {
+   //         pointer = i * (widn)*3 +j * 3;
+   //         all_pixels[pointer] = pixels_n[i][j].blueC;
+   //         all_pixels[pointer+1] = pixels_n[i][j].greenC;
+   //         all_pixels[pointer+2] = pixels_n[i][j].redC;
+   //         /*all_pixels[pointer] = 0x00;
+   //         all_pixels[pointer + 1] = 0x00;
+   //         all_pixels[pointer + 2] = 0x00;
+   //         count++;*/
+   //     }
+   // }
+   // /*std::cout << std::endl;
+   // std::cout << pointer;
+   // std::cout << std::endl;
+   // std::cout << count;*/
+   ///* for (int i = 0; i < 768; i++)
+   // {
+   //     std::cout << all_pixels[i] << std::endl;
+   // }*/
+   // for (int i = 0; i < 54; i++)
+   // {
+   //     std::cout << i+1 << " " << HEAD[i] << std::endl;
+   // }
+   padding = (widn*3) % 4;
+   for (int i = 0; i < heightn; i++)
+   {
+        for (int j = 0; j < widn; j++)
         {
             pfile << pixels_n[i][j].blueC;
             pfile << pixels_n[i][j].greenC;
             pfile << pixels_n[i][j].redC;
         }
-    }*/
-    int count = 0;
-    for (int i = 0; i < widn; i++)
-    {
-        for (int j = 0; j < heightn; j++)
-        {
-            pointer = i * (widn)*3 +j * 3;
-            all_pixels[pointer] = pixels_n[i][j].blueC;
-            all_pixels[pointer+1] = pixels_n[i][j].greenC;
-            all_pixels[pointer+2] = pixels_n[i][j].redC;
-            /*all_pixels[pointer] = 0x00;
-            all_pixels[pointer + 1] = 0x00;
-            all_pixels[pointer + 2] = 0x00;
-            count++;*/
-        }
-    }
-    /*std::cout << std::endl;
-    std::cout << pointer;
-    std::cout << std::endl;
-    std::cout << count;*/
-   /* for (int i = 0; i < 768; i++)
-    {
-        std::cout << all_pixels[i] << std::endl;
-    }*/
-    pfile.write((char*)&all_pixels, file_sizen - 54);
-    pfile.close();
+        pfile.write("", padding);
+   }
+   // //pfile.write((char*)all_pixels, file_sizen - 54);
+   pfile.close();
 }

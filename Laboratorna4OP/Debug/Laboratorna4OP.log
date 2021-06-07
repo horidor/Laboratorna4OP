@@ -1,6 +1,6 @@
 ﻿  main_g.cpp
 C:\labs\Laboratorna4OP\Laboratorna4OP\Laboratorna4OP\main_g.cpp(48,18): warning C4101: 'int32p': unreferenced local variable
 C:\labs\Laboratorna4OP\Laboratorna4OP\Laboratorna4OP\main_g.cpp(49,18): warning C4101: 'int16p': unreferenced local variable
+C:\labs\Laboratorna4OP\Laboratorna4OP\Laboratorna4OP\main_g.cpp(128): warning C4172: returning address of local variable or temporary: a
 C:\labs\Laboratorna4OP\Laboratorna4OP\Laboratorna4OP\main_g.cpp(133): warning C4172: returning address of local variable or temporary: a
-C:\labs\Laboratorna4OP\Laboratorna4OP\Laboratorna4OP\main_g.cpp(138): warning C4172: returning address of local variable or temporary: a
   Laboratorna4OP.vcxproj -> C:\labs\Laboratorna4OP\Laboratorna4OP\Debug\Laboratorna4OP.exe

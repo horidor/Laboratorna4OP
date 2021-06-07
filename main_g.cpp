@@ -32,6 +32,7 @@ private:
     BMPHEAD bh;
     PIXELDATA* pixels;
     int padding;
+
     int32_t* give_by_address32(unsigned char a)
     {
         return (int32_t*)&a;
@@ -41,6 +42,7 @@ private:
     {
         return (int16_t*)&a;
     }
+
     void create_header(unsigned char* HEAD)
     {
         int32_t* int32p;
@@ -67,8 +69,6 @@ private:
         bh.biClrImportant = *(give_by_address32(HEAD[50]));
     }
 
-    
-
     void create_pixeldata(unsigned char* pixel_bytes)
     {
         pixels = new PIXELDATA[bh.width*bh.depth];
@@ -85,9 +85,41 @@ private:
         }
     }
 
-    
+    void copy_header(BMPHEAD bhc, int mult = 1)
+    {
+        bh.id[0] = bhc.id[0];
+        bh.id[1] = bhc.id[1];
+        bh.filesize = ((bhc.width * mult) * (bhc.depth * mult) * 3) + 54 + ((4 - ((bhc.depth * mult) * 3) % 4) % 4) * (bhc.depth * mult);
+        bh.reserved[0] = bhc.reserved[0];
+        bh.reserved[1] = bhc.reserved[1];
+        bh.headersize = bhc.headersize;
+        bh.infoSize = bhc.infoSize;
+        bh.width = bhc.width * mult;
+        bh.depth = bhc.depth * mult;
+        bh.biPlanes = bhc.biPlanes;
+        bh.bits = bhc.bits;
+        bh.biCompression = bhc.biCompression;
+        bh.biSizeImage = bhc.biSizeImage;
+        bh.biXPelsPerMeter = bhc.biXPelsPerMeter;
+        bh.biYPelsPerMeter = bhc.biYPelsPerMeter;
+        bh.biClrUsed = bhc.biClrUsed;
+        bh.biClrImportant = bhc.biClrImportant;
+    }
 
-    
+    void copy_resiz_pixeldata(PIXELDATA* pixels_o, int d_old, int w_old)
+    {
+        int scale;
+        for (int i = 0; i < bh.depth; i++)
+        {
+            for (int j = 0; j < bh.width; j++)
+            {
+                scale = ((i * d_old) / bh.depth) * bh.depth + ((j * w_old) / bh.width);
+                pixels[i * bh.depth + j].blueC = pixels_o[scale].blueC;
+                pixels[i * bh.depth + j].greenC = pixels_o[scale].greenC;
+                pixels[i * bh.depth + j].redC = pixels_o[scale].redC;
+            }
+        }
+    }
 
 public:
     BITMAP(std::string name)
@@ -108,7 +140,15 @@ public:
         delete[] pixel_bytes;
     }
 
-    
+    BITMAP(BITMAP BM, int mult)
+    {
+        copy_header(BM.get_header(), mult);
+        copy_resiz_pixeldata(BM.get_pixels(), bh.depth / mult, bh.width / mult);
+        padding = (4 - (bh.width * 3) % 4) % 4;
+    }
+
+    BMPHEAD get_header() { return bh; }
+    PIXELDATA* get_pixels() { return pixels; }
 };
 
 int main(int _argc, char* _argv[])

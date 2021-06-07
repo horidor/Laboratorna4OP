@@ -1,4 +1,5 @@
 ﻿  main_g.cpp
-C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(124,10): warning C4101: 'HEI': unreferenced local variable
-C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(123,10): warning C4101: 'WID': unreferenced local variable
+C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(47,18): warning C4101: 'int32p': unreferenced local variable
+C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(208,10): warning C4101: 'HEI': unreferenced local variable
+C:\labs\Laboratorna4OP\Laboratorna4OP\main_g.cpp(207,10): warning C4101: 'WID': unreferenced local variable
   Laboratorna4OP.vcxproj -> C:\labs\Laboratorna4OP\Debug\Laboratorna4OP.exe
